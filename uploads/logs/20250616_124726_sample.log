@@ -1,0 +1,3 @@
+[2024-06-16 12:00:00] INFO: Sample log data line 1 
+[2024-06-16 12:01:00] ERROR: Something went wrong here 
+[2024-06-16 12:02:00] DEBUG: Debug message for analysis 
