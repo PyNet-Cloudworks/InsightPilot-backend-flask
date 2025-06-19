@@ -9,8 +9,6 @@ from app.utils.analyser import analyze_log_file, save_analysis_to_csv
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
-
-
 main = Blueprint('main', __name__)
 
 UPLOAD_DIRS = {
@@ -19,7 +17,17 @@ UPLOAD_DIRS = {
     'video': 'uploads/videos'
 }
 
-@main.route('/')  # Home route – this must return the upload UI
+def allowed_file(filename, filetype):
+    ext = filename.lower().rsplit('.', 1)[-1]
+    allowed_extensions = {
+        'log': ['log', 'txt'],
+        'image': ['jpg', 'jpeg', 'png'],
+        'video': ['mp4', 'avi', 'mov']
+    }
+    return ext in allowed_extensions.get(filetype, [])
+
+
+@main.route('/') 
 def home():
     return render_template('upload.html')
 
@@ -32,15 +40,17 @@ def upload_file():
         log_task(filename="N/A", filetype=filetype or "unknown", status="Failed", message="Invalid file or type")
         return render_template('upload.html', message="Invalid file or file type")
 
+    # ✅ Validate file extension
+    if not allowed_file(file.filename, filetype):
+        log_task(filename=file.filename, filetype=filetype, status="Failed", message="File type mismatch")
+        return render_template('upload.html', message=f"❌ File extension does not match selected type: {filetype}")
+
     filename = datetime.now().strftime('%Y%m%d_%H%M%S_') + file.filename
     save_path = os.path.join(UPLOAD_DIRS[filetype], filename)
-
     os.makedirs(UPLOAD_DIRS[filetype], exist_ok=True)
     file.save(save_path)
 
     log_task(filename=filename, filetype=filetype, status="Success", message="File uploaded successfully")
-
-    # ✅ Log to PostgreSQL
     new_log = UploadLog(filename=filename, filetype=filetype)
     db.session.add(new_log)
     db.session.commit()
@@ -48,7 +58,7 @@ def upload_file():
     if filetype == 'log':
         issues = analyze_log_file(save_path)
         report_filename = filename + '_analysis.csv'
-        save_analysis_to_csv(filename, issues)  
+        save_analysis_to_csv(filename, issues)
 
         report_path = os.path.join("analysis_reports", report_filename)
         if os.path.exists(report_path):
@@ -62,8 +72,9 @@ def upload_file():
             show_download=show_download,
             message=f"{filetype.capitalize()} uploaded with {len(issues)} issue(s)."
         )
-
+    
     return render_template('upload.html', message=f"{filetype.capitalize()} file uploaded successfully!")
+
 
 @main.route('/task-logs')
 def task_logs():
@@ -95,11 +106,5 @@ def download_report(filename):
         return f"File not found at: {file_path}", 404
 
     return send_from_directory(report_dir, filename, as_attachment=True)
-
-
-@main.route('/test-download')
-def test_download():
-    filename = '20250619_100527_with_errors_sample.log_analysis.csv'
-    return send_from_directory('analysis_reports', filename, as_attachment=True)
 
 
