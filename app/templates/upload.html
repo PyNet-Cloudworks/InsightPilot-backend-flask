@@ -37,9 +37,39 @@
         </div>
       </form>
 
+      {% if issues %}
+    <h3 style="color:#cc0000;">Detected Issues:</h3>
+    <ul>
+      {% for issue in issues %}
+        <li style="color:{% if issue.level == 'ERROR' %}red{% else %}orange{% endif %}">
+            <strong>[{{ issue.timestamp }}] {{ issue.level }}:</strong> {{ issue.message }}
+        </li>
+      {% endfor %}
+    </ul>
+
+    {% if show_download %}
+      <a href="{{ url_for('main.download_report', filename=report_path) }}" download class="btn btn-success mt-3">
+        Download Analysis Report
+      </a>
+    {% endif %}
+  {% endif %}
+
+      {% if error %}
+        <div class="alert alert-danger mt-4 text-center">{{ error }}</div>
+      {% endif %}
+
+      {% if success %}
+        <div class="alert alert-success mt-4 text-center">{{ success }}</div>
+      {% endif %}
+
       {% if message %}
         <div class="alert alert-info mt-4 text-center">{{ message }}</div>
       {% endif %}
+    
+      <div class="mt-4 text-center">
+        <p class="text-muted">Powered by <a href="https://insightpilot.com" target="_blank">InsightPilot</a></p>
+      </div>
+
     </div>
   </div>
 
