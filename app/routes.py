@@ -86,7 +86,8 @@ def task_logs():
             for row in reader:
                 if len(row) == 4:
                     row.append("")  
-                logs.append(row[::-1])  
+                logs.append(row)
+        logs = logs[::-1]  # Show latest logs first
     return render_template('task_logs.html', logs=logs)
 
 from flask import send_from_directory
