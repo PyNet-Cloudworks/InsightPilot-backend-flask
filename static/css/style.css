@@ -1,24 +1,108 @@
+/* General Reset & Base Styles */
 body {
-  background-color: #f5f7fa;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9fb;
+  color: #333;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
+/* Card container */
 .card {
-  border-radius: 1rem;
-  background-color: #ffffff;
   border: none;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
 }
 
+/* Heading */
 h2 {
   font-weight: 600;
+  font-size: 28px;
 }
 
+/* Label and form control spacing */
+.form-label {
+  font-weight: 500;
+}
+
+.form-control,
+.form-select {
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
 .btn-primary {
-  background-color: #2f80ed;
+  background-color: #0d6efd;
   border: none;
-  transition: background-color 0.3s ease;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-weight: 500;
 }
 
-.btn-primary:hover {
-  background-color: #1c60d6;
+.btn-outline-secondary {
+  border-radius: 10px;
+  padding: 10px 16px;
+}
+
+/* Issues List */
+.issues-list {
+  padding-left: 1.2rem;
+}
+
+.issues-list li {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+/* Annotated Image */
+.preview-img {
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  margin-top: 1rem;
+  max-width: 100%;
+}
+
+/* Alerts */
+.alert {
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* Footer */
+.footer {
+  font-size: 14px;
+  color: #777;
+  margin-top: 2rem;
+}
+
+.footer a {
+  color: #0d6efd;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+  }
+
+  .btn,
+  .form-control,
+  .form-select {
+    font-size: 14px;
+  }
 }

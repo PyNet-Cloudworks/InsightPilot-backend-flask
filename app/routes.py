@@ -6,6 +6,7 @@ from app.utils.storage import log_task  # ← Import the logger
 from .models import UploadLog
 from . import db
 from app.utils.analyser import analyze_log_file, save_analysis_to_csv
+from app.utils.image_processor import annotate_image
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -61,6 +62,7 @@ def upload_file():
         save_analysis_to_csv(filename, issues)
 
         report_path = os.path.join("analysis_reports", report_filename)
+
         if os.path.exists(report_path):
             show_download = True
         else:
@@ -71,6 +73,14 @@ def upload_file():
             report_path=report_filename,
             show_download=show_download,
             message=f"{filetype.capitalize()} uploaded with {len(issues)} issue(s)."
+        )
+    
+    if filetype == 'image':
+        annotated_filename = annotate_image(save_path)
+
+        return render_template('upload.html',
+            message="Image uploaded and annotated.",
+            annotated_image=annotated_filename  # ✅ only filename here
         )
     
     return render_template('upload.html', message=f"{filetype.capitalize()} file uploaded successfully!")
@@ -107,5 +117,6 @@ def download_report(filename):
         return f"File not found at: {file_path}", 404
 
     return send_from_directory(report_dir, filename, as_attachment=True)
+
 
 
