@@ -1,8 +1,0 @@
-[2025-06-18 10:00:00] INFO Starting the application
-[2025-06-18 10:01:10] WARNING Configuration file not found, using defaults
-[2025-06-18 10:02:20] ERROR Failed to connect to the database
-[2025-06-18 10:03:30] INFO Retrying connection...
-[2025-06-18 10:04:40] DEBUG Connection parameters loaded
-[2025-06-18 10:05:50] ERROR Timeout occurred during request
-[2025-06-18 10:06:00] WARNING Deprecated API usage detected
-[2025-06-18 10:07:10] INFO Shutdown initiated

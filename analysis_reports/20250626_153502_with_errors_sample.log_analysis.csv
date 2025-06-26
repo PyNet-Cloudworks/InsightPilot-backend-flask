@@ -1,5 +1,0 @@
-timestamp,level,message
-2025-06-18 10:01:10,WARNING,"Configuration file not found, using defaults"
-2025-06-18 10:02:20,ERROR,Failed to connect to the database
-2025-06-18 10:05:50,ERROR,Timeout occurred during request
-2025-06-18 10:06:00,WARNING,Deprecated API usage detected
