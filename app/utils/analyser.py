@@ -27,7 +27,6 @@ def save_analysis_to_csv(log_filename, issues, output_dir='analysis_reports'):
     Save the extracted issues to a CSV file.
     """
     os.makedirs(output_dir, exist_ok=True)
-    # output_file = os.path.join(output_dir, f"{log_filename}_analysis.csv")
     output_file = os.path.join("analysis_reports", log_filename + "_analysis.csv")
 
     with open(output_file, 'w', newline='') as csvfile:
@@ -36,5 +35,4 @@ def save_analysis_to_csv(log_filename, issues, output_dir='analysis_reports'):
         writer.writerows(issues)
 
     return output_file
-    # return os.path.join('analysis_reports', output_file)
 

@@ -63,6 +63,15 @@
     </div>
     {% endif %}
 
+    <!-- defect Image -->
+    {% if defect_image %}
+      <div class="mb-10">
+        <h3 class="text-xl font-semibold mb-2 text-gray-700">🛠 Defect Detection</h3>
+        <img src="{{ url_for('static', filename='processed_images/' ~ defect_image) }}"
+            class="rounded border shadow max-w-full" />
+      </div>
+    {% endif %}
+
     <!-- Similar Images -->
     {% if similar_images %}
     <div class="mb-10">
@@ -101,6 +110,52 @@
       </a>
     </div>
     {% endif %}
+
+    {% if video_frames_raw or video_frames_face or video_frames_defect %}
+      <section class="mt-8 space-y-8">
+
+        {% if video_frames_face %}
+          <div>
+            <h3 class="text-xl font-semibold text-green-700 mb-2">🟢 Face Detection</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {% for img in video_frames_face %}
+                <img src="{{ url_for('static', filename='processed_images/' + img) }}" alt="Face Frame" class="rounded shadow">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if video_frames_defect %}
+          <div>
+            <h3 class="text-xl font-semibold text-red-700 mb-2">🔴 Defect Detection</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {% for img in video_frames_defect %}
+                <img src="{{ url_for('static', filename='processed_images/' + img) }}" alt="Defect Frame" class="rounded shadow">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if video_frames_raw %}
+          <div>
+            <h3 class="text-xl font-semibold text-gray-700 mb-2">🟡 Raw Extracted Frames</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {% for img in video_frames_raw %}
+                <img src="{{ url_for('static', filename='video_frames/' + img) }}" alt="Raw Frame" class="rounded shadow">
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        {% if video_csv %}
+          <a href="/analysis_reports/{{ video_csv }}" class="mt-6 inline-block bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500">
+            📥 Download Frame Analysis Report
+          </a>
+        {% endif %}
+
+      </section>
+    {% endif %}
+
 
   </main>
 
