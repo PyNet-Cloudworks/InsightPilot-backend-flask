@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: insightpilot-app
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
+    plan: free
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: false
+      - key: SECRET_KEY
+        value: your-strong-secret-key
+      - key: SQLALCHEMY_DATABASE_URI
+        fromDatabase:
+          name: insightpilot-db
+          property: connectionString
+databases:
+  - name: insightpilot-db
