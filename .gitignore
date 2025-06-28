@@ -1,5 +1,30 @@
-__pycache__/
-instance/
-.env
-*.pyc
+# Python virtual environments
 venv/
+.env
+.env.*
+__pycache__/
+*.pyc
+
+# Uploads
+uploads/
+output/
+processed_images/
+logs/
+
+# Generated static content
+static/processed_images/
+static/video_frames/
+analysis_reports/
+
+# VSCode
+.vscode/
+
+# YOLO model (heavy)
+yolov8n-face.pt
+
+# Other
+*.log
+*.db
+*.diff
+.DS_Store
+Thumbs.db

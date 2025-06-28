@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Uploads | InsightPilot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+  <div class="max-w-4xl mx-auto py-10 px-4">
+    <h1 class="text-2xl font-bold mb-6">📂 My Uploads (This Session)</h1>
+
+    {% if logs %}
+      <table class="w-full bg-white shadow rounded overflow-hidden">
+        <thead class="bg-indigo-100 text-indigo-900 text-left">
+          <tr>
+            <th class="p-3">Filename</th>
+            <th class="p-3">Type</th>
+            <th class="p-3">Status</th>
+            <th class="p-3">Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in logs %}
+            <tr class="border-t hover:bg-gray-50">
+              <td class="p-3">{{ entry.filename }}</td>
+              <td class="p-3">{{ entry.filetype }}</td>
+              <td class="p-3">{{ entry.status }}</td>
+              <td class="p-3">{{ entry.message }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-gray-600">No uploads yet in this session.</p>
+    {% endif %}
+
+    <div class="mt-6">
+      <a href="/upload" class="text-indigo-600 hover:underline">⬅ Back to Upload Page</a>
+    </div>
+  </div>
+</body>
+</html>
