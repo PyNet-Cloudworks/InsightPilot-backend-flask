@@ -1,52 +1,36 @@
-# 📤 InsightPilot – QA File Upload and Log Analysis
+# 🚀 InsightPilot-DSML – Smart Log File Analysis with ML
 
-InsightPilot is a Flask-based tool for uploading QA files, analyzing `.log` files for errors/warnings, and tracking uploads in CSV and PostgreSQL (via pgAdmin).
-
----
-
-## ✅ Features
-
-- Upload and parse `.log` files for issues.
-- Downloadable `.csv` reports generated per upload.
-- Upload logging to both local CSV and PostgreSQL.
-- Web UI built using Bootstrap 5.
-- pgAdmin used to inspect and manage backend DB logs.
+InsightPilot-DSML is an advanced, lightweight web application built using Flask + Data Science tooling.  
+It allows users to upload log files, analyze patterns using machine learning, detect anomalies, cluster similar messages, and generate reports — all with a clean UI.
 
 ---
 
-## 🛠️ Tech Stack
+## 🌟 Features
 
-- **Python** (Flask, SQLAlchemy)
-- **PostgreSQL + pgAdmin**
-- **HTML + Bootstrap**
-- **dotenv + YAML config**
+✅ Upload log files (.log, .txt)  
+✅ Auto-parse timestamp, level, message  
+✅ Clustering of log messages (TF-IDF + KMeans / HDBSCAN)  
+✅ Anomaly detection (Isolation Forest)  
+✅ Severity scoring (rule-based + ML hybrid)  
+✅ Downloadable enriched CSV reports  
+✅ Interactive dashboard with error trends (Plotly / Matplotlib)  
+✅ REST API for programmatic access  
+✅ Minimal UI (Tailwind CSS)
 
 ---
 
-## 🗃️ Folder Structure
+## ⚙️ Requirements
 
-InsightPilot-backend-flask/
-│
-├── app/
-│ ├── routes.py
-│ ├── models.py
-│ ├── init.py
-│ └── utils/
-│ ├── analyser.py
-│ └── storage.py
-│
-├── analysis_reports/ # Generated CSVs
-├── logs/ # Upload log CSV
-├── uploads/ # Uploaded files
-├── static/ # Styles
-├── templates/ # HTML templates
-│ ├── upload.html
-│ └── task_logs.html
-│
-├── instance/ # Flask config (optional)
-├── .env # Environment variables
-├── .env.example # Template
-├── insightpilot_config.yaml # 🔧 YAML-based config
-├── requirements.txt # Dependencies (frozen)
-├── run.py # Entry point
-└── README.md
+- Python 3.10+  
+- Flask  
+- scikit-learn  
+- pandas  
+- numpy  
+- matplotlib / plotly  
+- python-dotenv  
+- sentence-transformers (optional)
+
+👉 Install dependencies:
+
+```bash
+pip install -r requirements.txt

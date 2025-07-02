@@ -7,20 +7,11 @@ __pycache__/
 
 # Uploads
 uploads/
-output/
-processed_images/
 logs/
-
-# Generated static content
-static/processed_images/
-static/video_frames/
 analysis_reports/
 
 # VSCode
 .vscode/
-
-# YOLO model (heavy)
-yolov8n-face.pt
 
 # Other
 *.log

@@ -2,152 +2,111 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>InsightPilot | Smart QA Automation</title>
+  <title>InsightPilot | Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3448/3448442.png" />
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans leading-relaxed min-h-screen">
+<body class="bg-gray-50 text-gray-900">
+  <section class="flex flex-col items-center justify-center min-h-screen px-4">
+    <div class="bg-white shadow-xl rounded-xl p-8 max-w-md w-full text-center">
+      <h1 class="text-4xl font-extrabold mb-2 text-indigo-700">InsightPilot</h1>
+      <p class="text-sm text-gray-500 mb-6">Upload your log file to generate insights & visual reports</p>
 
-  <header class="bg-white shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center">
-      <h1 class="text-2xl font-bold text-gray-800">📊 InsightPilot</h1>
-      <a href="/" class="text-indigo-600 hover:underline">🏠 Home</a>
-    </div>
-  </header>
+      {% if message %}
+      <div class="bg-indigo-100 border border-indigo-300 text-indigo-700 px-4 py-2 rounded mb-4">
+        {{ message }}
+      </div>
+      {% endif %}
 
-  <main class="max-w-5xl mx-auto px-4 py-10">
-
-    <section class="bg-white p-6 rounded shadow mb-10">
-      <h2 class="text-2xl font-semibold mb-4 text-gray-800">📤 Upload a File</h2>
-      <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-4">
-        <div>
-          <label class="block mb-1 font-medium">Choose File</label>
-          <input type="file" name="file" class="w-full border rounded p-2" required />
-        </div>
-        <div>
-          <label class="block mb-1 font-medium">File Type</label>
-          <select name="filetype" class="w-full border rounded p-2" required>
-            <option value="">-- Select File Type --</option>
-            <option value="log">Log File (.log, .txt)</option>
-            <option value="image">Image File (.jpg, .png)</option>
-            <option value="video">Video File (.mp4, .avi)</option>
-          </select>
-        </div>
-        <div class="flex gap-3 flex-wrap">
-          <button type="submit" class="bg-indigo-600 text-white px-5 py-2 rounded hover:bg-indigo-500 transition">Analyze</button>
-          <a href="/my-uploads" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300 transition">📜 My Uploads This Session</a>
-          <a href="/clear-uploads" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-500 transition">🧹 Clear Upload History</a>
-        </div>
+      <form action="/upload" method="post" enctype="multipart/form-data" class="space-y-4">
+        <input type="file" name="file" class="block w-full text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">
+          Upload & Analyze
+        </button>
       </form>
-    </section>
 
-    {% if message %}
-      <div class="mb-6 p-4 bg-green-100 text-green-800 border border-green-300 rounded">{{ message }}</div>
-    {% endif %}
-
-    {% if annotated_image %}
-      <div class="mb-10">
-        <h3 class="text-xl font-semibold mb-2 text-gray-700">🖼 Annotated Image</h3>
-        <img src="{{ url_for('static', filename='processed_images/' ~ annotated_image) }}" class="rounded border shadow max-w-full" />
+      {% if show_download %}
+      <div class="mt-4 space-x-2">
+        <a href="/analysis_reports/{{ report_path }}" class="text-indigo-600 underline">Download Analysis CSV</a>
+        <a href="/analysis_reports/{{ summary_path }}" class="text-indigo-600 underline">Download Summary CSV</a>
       </div>
-    {% endif %}
+      {% endif %}
+    </div>
+  </section>
 
-    {% if defect_image %}
-      <div class="mb-10">
-        <h3 class="text-xl font-semibold mb-2 text-gray-700">🛠 Defect Detection</h3>
-        <img src="{{ url_for('static', filename='processed_images/' ~ defect_image) }}" class="rounded border shadow max-w-full" />
-      </div>
-    {% endif %}
+  {% if issues %}
+  <section class="max-w-4xl mx-auto py-10 space-y-8">
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <div id="plotly-severity"></div>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <div id="plotly-level"></div>
+    </div>
+    <div class="bg-white shadow-md rounded-lg p-4">
+      <div id="plotly-cluster"></div>
+    </div>
+  </section>
 
-    {% if similar_images %}
-      <div class="mb-10">
-        <h3 class="text-xl font-semibold text-red-600 mb-2">⚠️ Similar Images Detected</h3>
-        <ul class="list-disc ml-6 text-gray-800">
-          {% for sim in similar_images %}
-            <li>{{ sim }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+  <script>
+    const issues = {{ (issues | default([])) | tojson }};
+    if (issues.length > 0) {
+      const ts = issues.map(i => i.timestamp);
+      const sev = issues.map(i => i.severity_score);
+      const cl = issues.map(i => i.cluster);
+      const an = issues.map(i => i.anomaly);
+      const levels = issues.map(i => i.level);
 
-    {% if issues %}
-      <div class="mb-10">
-        <h3 class="text-xl font-semibold text-gray-800 mb-2">🧾 Issues Found in Log</h3>
-        <ul class="space-y-2 text-sm">
-          {% for issue in issues %}
-            <li class="p-2 bg-white rounded border">
-              [{{ issue.timestamp }}]
-              <strong class="{% if issue.level == 'ERROR' %}text-red-600{% else %}text-yellow-600{% endif %}">
-                {{ issue.level }}
-              </strong>: {{ issue.message }}
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
-    {% endif %}
+      // Severity + Anomalies timeline
+      Plotly.newPlot('plotly-severity', [
+        {
+          x: ts,
+          y: sev,
+          mode: 'lines+markers',
+          name: 'Severity',
+          line: { color: '#9ca3af', width: 3 }
+        },
+        {
+          x: ts.filter((_, i) => an[i] === -1),
+          y: sev.filter((_, i) => an[i] === -1),
+          mode: 'markers',
+          name: 'Anomalies',
+          marker: { color: '#f87171', size: 10, symbol: 'x' }
+        }
+      ], {
+        title: 'Severity and Anomalies Over Time',
+        xaxis: { title: 'Timestamp' },
+        yaxis: { title: 'Severity Score' }
+      });
 
-    {% if show_download %}
-      <div class="mb-10">
-        <a href="{{ url_for('main.download_report', filename=report_path) }}"
-           class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500">
-          📥 Download CSV Report
-        </a>
-      </div>
-    {% endif %}
+      // Log level frequency bar
+      const levelCounts = {};
+      levels.forEach(l => levelCounts[l] = (levelCounts[l] || 0) + 1);
+      Plotly.newPlot('plotly-level', [{
+        x: Object.keys(levelCounts),
+        y: Object.values(levelCounts),
+        type: 'bar',
+        marker: { color: ['#fbbf24', '#60a5fa'] }
+      }], {
+        title: 'Log Level Frequency',
+        xaxis: { title: 'Log Level' },
+        yaxis: { title: 'Count' }
+      });
 
-    {% if video_frames_raw or video_frames_face or video_frames_defect %}
-      <section class="mt-8 space-y-8">
-        {% if video_frames_face %}
-          <div>
-            <h3 class="text-xl font-semibold text-green-700 mb-2">🟢 Face Detection</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {% for img in video_frames_face %}
-                <img src="{{ url_for('static', filename='processed_images/' + img) }}" class="rounded shadow">
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-        {% if video_frames_defect %}
-          <div>
-            <h3 class="text-xl font-semibold text-red-700 mb-2">🔴 Defect Detection</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {% for img in video_frames_defect %}
-                <img src="{{ url_for('static', filename='processed_images/' + img) }}" class="rounded shadow">
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-        {% if video_frames_raw %}
-          <div>
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">🟡 Raw Extracted Frames</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {% for img in video_frames_raw %}
-                <img src="{{ url_for('static', filename='video_frames/' + img) }}" class="rounded shadow">
-              {% endfor %}
-            </div>
-          </div>
-        {% endif %}
-      </section>
-    {% endif %}
-
-    {% if my_uploads %}
-      <section class="mt-10">
-        <h3 class="text-xl font-semibold text-gray-700 mb-2">📂 My Uploads This Session</h3>
-        <ul class="space-y-2">
-          {% for log in my_uploads %}
-            <li class="p-2 bg-white rounded border">
-              <strong>{{ log.filetype|capitalize }}</strong> — {{ log.filename }} <br>
-              <span class="text-sm text-gray-500">{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</span>
-            </li>
-          {% endfor %}
-        </ul>
-      </section>
-    {% endif %}
-
-  </main>
-
-  <footer class="bg-gray-100 text-center py-6 text-sm text-gray-600">
-    &copy; {{ current_year or "2025" }} InsightPilot. All rights reserved.
-  </footer>
+      // Cluster distribution pie
+      const clusterCounts = {};
+      cl.forEach(c => clusterCounts[c] = (clusterCounts[c] || 0) + 1);
+      Plotly.newPlot('plotly-cluster', [{
+        values: Object.values(clusterCounts),
+        labels: Object.keys(clusterCounts),
+        type: 'pie',
+        marker: {
+          colors: ['#fcd34d', '#93c5fd', '#a7f3d0', '#fbcfe8', '#fde68a']
+        }
+      }], {
+        title: 'Cluster Distribution'
+      });
+    }
+  </script>
+  {% endif %}
 </body>
 </html>
